@@ -28,11 +28,13 @@ source-repository head
 executable ca-patterns
     main-is:          Main.hs
 
-    -- Modules included in this executable, other than Main.
-    -- other-modules:
+    other-modules:    Data.CA.Pattern
 
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
-    build-depends:    base ^>=4.14.1.0
+    build-depends:    base ^>=4.14.1.0,
+                      vector ^>=0.12.3.0
+
+    ghc-options:      -Wall
     hs-source-dirs:   app
     default-language: Haskell2010
