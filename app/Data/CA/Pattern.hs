@@ -8,11 +8,11 @@ module Data.CA.Pattern
   , toText, toString
   , lookup, generate
   , height, width, dimensions, valid
-  , trimTop, trimBottom, trimLeft, trimRight
+  , trimTop, trimBottom, trimLeft, trimRight, trim
   , setHeight, setWidth, setDimensions
   , reflectX, reflectY, rotateL, rotateR
-  , combine )
-  where
+  , combine
+  ) where
 
 import Prelude hiding (lookup)
 import qualified Data.Maybe as Maybe
@@ -52,7 +52,7 @@ lastCell row
   | otherwise = Vec.last row
 
 data Cell = Dead | Alive
-  deriving (Eq, Ord)
+  deriving (Eq, Ord, Show)
 
 isDead :: Cell -> Bool
 isDead = \case { Dead -> True; Alive -> False }
@@ -145,6 +145,9 @@ trimLeft = transform trimLeftV
 trimRight :: Pattern -> Pattern
 trimRight = transform trimRightV
 
+trim :: Pattern -> Pattern
+trim = trimTop . trimBottom . trimLeft . trimRight
+
 setHeight :: Int -> Pattern -> Pattern
 setHeight h pat =
   case compare h (height pat) of
@@ -173,12 +176,12 @@ reflectY = transform Vec.reverse
 rotateL :: Pattern -> Pattern
 rotateL pat = let
   (h, w) = dimensions pat
-  in generate w h \r c -> lookup (h - c) r pat
+  in generate w h \r c -> lookup c (w - r - 1) pat
 
 rotateR :: Pattern -> Pattern
 rotateR pat = let
   (h, w) = dimensions pat
-  in generate w h \r c -> lookup c (w - r) pat
+  in generate w h \r c -> lookup (h - c - 1) r pat
 
 combine :: Int -> Int -> Pattern -> Pattern -> Pattern
 combine y x pat1 pat2 = let
