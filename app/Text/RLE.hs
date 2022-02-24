@@ -22,7 +22,8 @@ A glider in the Game of Life could be represented like so:
 > x = 3, y = 3, rule = B3/S23
 > 3o$2bo$bo!
 
-[LifeWiki article](https://conwaylife.com/wiki/Run_Length_Encoded)
+See this [LifeWiki article](https://conwaylife.com/wiki/Run_Length_Encoded)
+for more information.
 -}
 
 {-# LANGUAGE BlockArguments, LambdaCase, OverloadedStrings, FlexibleContexts #-}

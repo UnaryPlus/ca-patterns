@@ -31,7 +31,9 @@ withDimensions h w = map Pat.fromRectList (possible2 h w)
 
 {-|
 Combine two patterns in multiple ways. Useful for creating
-a list of glider / still life collisions.
+a list of spaceship / still life collisions.
+
+See [@combine@]('Pat.combine').
 -}
 combinations
   :: (Int, Int) -- ^ min and max y offset

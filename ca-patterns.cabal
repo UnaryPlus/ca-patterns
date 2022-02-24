@@ -4,9 +4,7 @@ version:       0.0.0.0
 author:        UnaryPlus
 maintainer:    ombspring@gmail.com
 
-synopsis:
-  Data types for life-like cellular automata, functions for creating and
-  parsing RLE files
+synopsis: Manipulate patterns in cellular automata, create and parse RLE files
 
 description:
   This package contains a Pattern type for working with 2-dimensional 2-state
