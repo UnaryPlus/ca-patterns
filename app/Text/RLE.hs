@@ -136,7 +136,7 @@ toPattern (Header h w rule, runs) = let
 
 {-|
 Parse an RLE file, returning a 'Rule' (if it exists) and a 'Pattern'.
-The argument can be @String@, @Text@, or any other type with a 'Stream'
+The argument can be 'String', 'Text', or any other type with a 'Stream'
 instance.
 
 This parser is fairly liberal. Whitespace is allowed everywhere except
@@ -183,7 +183,7 @@ showRuns = curry \case
   (n, run : runs) -> showRun run <> showRuns (n - 1) runs
 
 {-|
-Convert a 'Pattern' into an RLE. If the first argument is @Nothing@,
+Convert a 'Pattern' into an RLE. If the first argument is 'Nothing',
 the generated RLE will have no "rule" field in its header.
 -}
 make :: (Monoid s, IsString s) => Maybe Rule -> Pattern -> s

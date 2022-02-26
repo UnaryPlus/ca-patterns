@@ -19,7 +19,7 @@ possible2 h w = let
   in composeN h (Ap.liftA2 (:) rows) [[]]
 
 {-|
-A list of every possible @h@ by @w@ pattern. This function
+A list of every possible h by w pattern. This function
 is necessarily exponential in both arguments, so it's only
 practical if the dimensions are very small.
 -}
@@ -33,11 +33,11 @@ withDimensions h w = map Pat.fromRectList (possible2 h w)
 Combine two patterns in multiple ways. Useful for creating
 a list of spaceship / still life collisions.
 
-See [@combine@]('Pat.combine').
+See 'Pat.combine'.
 -}
 combinations
-  :: (Int, Int) -- ^ min and max y offset
-  -> (Int, Int) -- ^ min and max x offset
+  :: (Int, Int) -- ^ min and max vertical offset
+  -> (Int, Int) -- ^ min and max horizonal offset
   -> Pattern -> Pattern -> [Pattern]
 combinations (yMin, yMax) (xMin, xMax) pat1 pat2 = let
   combine y x = Pat.combine y x pat1 pat2

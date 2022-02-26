@@ -1,9 +1,10 @@
 cabal-version: 2.4
 name:          ca-patterns
 version:       0.0.0.0
-author:        UnaryPlus
+author:        Owen Bechtel
 maintainer:    ombspring@gmail.com
 
+category: Data, Text, Parsing
 synopsis: Manipulate patterns in cellular automata, create and parse RLE files
 
 description:

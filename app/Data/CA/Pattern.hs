@@ -87,7 +87,7 @@ transform f (Pattern rows) = Pattern (f rows)
 Get the state of one of the cells in a pattern. @lookup 0 0@
 returns the cell in the upper-left corner. If the row
 or column number is out of range, this function will
-return @Dead@.
+return 'Dead'.
 -}
 lookup
   :: Int -- ^ row
@@ -184,9 +184,9 @@ toSomeString makeStr dead alive (Pattern rows) = let
   in foldMap makeLine rows
 
 {-|
-Convert a pattern into text. For example, toText '.' 'Z'
-will replace each dead cell with a '.' and each live cell
-with an 'Z'.
+Convert a pattern into text. For example, @toText \'.' \'Z'@
+will replace each dead cell with a @.@ and each live cell
+with a @Z@.
 -}
 toText
   :: Char -- ^ dead cell
@@ -240,7 +240,7 @@ trimRight :: Pattern -> Pattern
 trimRight = transform trimRightV
 
 {-|
-A composition of @trimTop@, @trimBottom@, @trimLeft@, and @trimRight@.
+A composition of 'trimTop', 'trimBottom', 'trimLeft', and 'trimRight'.
 Removes as many dead cells from the pattern as possible while
 keeping it rectangular.
 -}
@@ -311,8 +311,8 @@ which describe the displacement of the second pattern relative
 to the first one.
 -}
 combine
-  :: Int -- ^ y offset
-  -> Int -- ^ x offset
+  :: Int -- ^ vertical offset
+  -> Int -- ^ horizontal offset
   -> Pattern -> Pattern -> Pattern
 combine y x pat1 pat2 = let
   (y1, y2) = if y < 0 then (-y, 0) else (0, y)
