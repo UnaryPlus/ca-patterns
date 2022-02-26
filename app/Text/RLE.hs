@@ -171,12 +171,12 @@ showRunType = \case
   Alive -> "o"
   Newline -> "$"
 
-showRun :: (Semigroup s, IsString s) => Run -> s
+showRun :: (Monoid s, IsString s) => Run -> s
 showRun = \case
   (1, rt) -> showRunType rt
   (n, rt) -> fromShow n <> showRunType rt
 
-showRuns :: (Semigroup s, IsString s) => Int -> [Run] -> s
+showRuns :: (Monoid s, IsString s) => Int -> [Run] -> s
 showRuns = curry \case
   (_, []) -> ""
   (0, runs) -> "\n" <> showRuns 30 runs
