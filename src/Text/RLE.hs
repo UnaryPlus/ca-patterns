@@ -171,12 +171,12 @@ showRunType = \case
   Alive -> "o"
   Newline -> "$"
 
-showRun :: (Monoid s, IsString s) => Run -> s
+showRun :: (Semigroup s, IsString s) => Run -> s
 showRun = \case
   (1, rt) -> showRunType rt
   (n, rt) -> fromShow n <> showRunType rt
 
-showRuns :: (Monoid s, IsString s) => Int -> [Run] -> s
+showRuns :: (Semigroup s, IsString s) => Int -> [Run] -> s
 showRuns = curry \case
   (_, []) -> ""
   (0, runs) -> "\n" <> showRuns 30 runs
@@ -186,7 +186,7 @@ showRuns = curry \case
 Convert a 'Pattern' into an RLE. If the first argument is 'Nothing',
 the generated RLE will have no "rule" field in its header.
 -}
-make :: (Monoid s, IsString s) => Maybe Rule -> Pattern -> s
+make :: (Semigroup s, IsString s) => Maybe Rule -> Pattern -> s
 make rule pat = let
   x = "x = " <> fromShow (Pat.width pat)
   y = ", y = " <> fromShow (Pat.height pat)
