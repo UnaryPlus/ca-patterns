@@ -1,2 +1,4 @@
 # ca-patterns
-Data types for life-like cellular automata, functions for creating and parsing RLE files
+Manipulate patterns in cellular automata, create and parse RLE files.
+
+Documentation is available on [Hackage](https://hackage.haskell.org/package/ca-patterns-0.1.0.0)
