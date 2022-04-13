@@ -75,6 +75,9 @@ A pattern in a 2-dimensional 2-state cellular automaton.
 newtype Pattern = Pattern (Vector (Vector Cell))
   deriving (Eq)
 
+instance Show Pattern where
+  show pat = "fromList " ++ show (toList pat)
+
 transform :: (Vector (Vector Cell) -> Vector (Vector Cell)) -> Pattern -> Pattern
 transform f (Pattern rows) = Pattern (f rows)
 
