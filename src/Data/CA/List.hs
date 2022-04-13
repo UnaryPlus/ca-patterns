@@ -11,7 +11,7 @@ composeN n f
   | otherwise = f . composeN (n - 1) f
 
 possible1 :: Int -> [[Cell]]
-possible1 n = composeN n (Ap.liftA2 (:) [Dead, Alive]) [[]]
+possible1 n = composeN n (Ap.liftA2 (:) [False, True]) [[]]
 
 possible2 :: Int -> Int -> [[[Cell]]]
 possible2 h w = let

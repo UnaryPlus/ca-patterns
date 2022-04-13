@@ -7,7 +7,7 @@ and combine CA patterns.
 
 module Data.CA.Pattern
   ( -- * Cells
-    Cell(..), isDead, isAlive
+    Cell
     -- * Patterns
   , Pattern, lookup, generate, height, width, dimensions, valid
     -- * Vector conversions
@@ -55,25 +55,19 @@ dropLast row
 
 firstCell :: Vector Cell -> Cell
 firstCell row
-  | Vec.null row = Dead
+  | Vec.null row = False
   | otherwise = Vec.head row
 
 lastCell :: Vector Cell -> Cell
 lastCell row
-  | Vec.null row = Dead
+  | Vec.null row = False
   | otherwise = Vec.last row
 
 {-|
-The state of a cell.
+The state of a cell. 'True' represents a live cell and
+'False' represents a dead cell.
 -}
-data Cell = Dead | Alive
-  deriving (Eq, Ord, Show)
-
-isDead :: Cell -> Bool
-isDead = \case { Dead -> True; Alive -> False }
-
-isAlive :: Cell -> Bool
-isAlive = \case { Dead -> False; Alive -> True }
+type Cell = Bool
 
 {-|
 A pattern in a 2-dimensional 2-state cellular automaton.
@@ -93,7 +87,7 @@ lookup
   :: Int -- ^ row
   -> Int -- ^ column
   -> Pattern -> Cell
-lookup r c (Pattern rows) = Maybe.fromMaybe Dead (rows !? r >>= (!? c))
+lookup r c (Pattern rows) = Maybe.fromMaybe False (rows !? r >>= (!? c))
 
 {-|
 Generate a pattern from a function.
@@ -146,7 +140,7 @@ rectangular.
 fromVector :: Vector (Vector Cell) -> Pattern
 fromVector rows = let
   maxWidth = foldr (max . Vec.length) 0 rows
-  padded = fmap (padEnd maxWidth Dead) rows
+  padded = fmap (padEnd maxWidth False) rows
   in Pattern padded
 
 {-|
@@ -179,7 +173,7 @@ toList (Pattern rows) = map Vec.toList (Vec.toList rows)
 
 toSomeString :: (Monoid s, IsString s) => (Vector Char -> s) -> Char -> Char -> Pattern -> s
 toSomeString makeStr dead alive (Pattern rows) = let
-  toChar = \case { Dead -> dead; Alive -> alive }
+  toChar cell = if cell then alive else dead
   makeLine row = makeStr (fmap toChar row) <> "\n"
   in foldMap makeLine rows
 
@@ -209,22 +203,22 @@ toString = toSomeString Vec.toList
 Remove rows of dead cells from the top of a pattern.
 -}
 trimTop :: Pattern -> Pattern
-trimTop = transform (Vec.dropWhile (all isDead))
+trimTop = transform (Vec.dropWhile (all not))
 
 {-|
 Remove rows of dead cells from the bottom of a pattern.
 -}
 trimBottom :: Pattern -> Pattern
-trimBottom = transform (dropWhileEnd (all isDead))
+trimBottom = transform (dropWhileEnd (all not))
 
 trimLeftV :: Vector (Vector Cell) -> Vector (Vector Cell)
 trimLeftV rows
-  | all (isDead . firstCell) rows = trimLeftV (fmap dropFirst rows)
+  | not (any firstCell rows) = trimLeftV (fmap dropFirst rows)
   | otherwise = rows
 
 trimRightV :: Vector (Vector Cell) -> Vector (Vector Cell)
 trimRightV rows
-  | all (isDead . lastCell) rows = trimRightV (fmap dropLast rows)
+  | not (any lastCell rows) = trimRightV (fmap dropLast rows)
   | otherwise = rows
 
 {-|
@@ -257,7 +251,7 @@ setHeight h pat =
     LT -> transform (Vec.take h) pat
     EQ -> pat
     GT -> let
-      row = Vec.replicate (width pat) Dead
+      row = Vec.replicate (width pat) False
       in transform (padEnd h row) pat
 
 {-|
@@ -269,7 +263,7 @@ setWidth w pat =
   case compare w (width pat) of
     LT -> transform (fmap (Vec.take w)) pat
     EQ -> pat
-    GT -> transform (fmap (padEnd w Dead)) pat
+    GT -> transform (fmap (padEnd w False)) pat
 
 {-|
 Set the height and width of a pattern.

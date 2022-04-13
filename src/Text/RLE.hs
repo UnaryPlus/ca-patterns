@@ -28,7 +28,7 @@ for more information.
 
 {-# LANGUAGE BlockArguments, LambdaCase, OverloadedStrings, FlexibleContexts #-}
 
-module Text.RLE (Rule, parse, make, printAll) where
+module Text.RLE (Rule, parse, parseMany, make, printAll) where
 
 import qualified Data.Char as Char
 import qualified Data.String as String
@@ -122,8 +122,8 @@ updateRows = curry \case
     runs' = (n - 1, rt) : runs
 
     rows' = case rt of
-      Dead -> add Pat.Dead rows
-      Alive -> add Pat.Alive rows
+      Dead -> add False rows
+      Alive -> add True rows
       Newline -> [] : rows
 
     in updateRows runs' rows'
@@ -150,6 +150,16 @@ parse str =
     Left _ -> Nothing
     Right rle -> Just (toPattern rle)
 
+{-|
+Parse zero or more RLE files. The argument can be 'String', 'Text', or
+any other type with a 'Stream' instance.
+-}
+parseMany :: (Stream s Identity Char) => s -> Maybe [(Maybe Rule, Pattern)]
+parseMany str =
+  case runParser (many parseRLE) () "" str of
+    Left _ -> Nothing
+    Right rles -> Just (map toPattern rles)
+
 updateRuns :: [[Pat.Cell]] -> [Run] -> [Run]
 updateRuns = let
   add rt = \case
@@ -159,8 +169,8 @@ updateRuns = let
   in curry \case
   ([], runs) -> reverse runs
   ([] : rows, runs) -> updateRuns rows (add Newline runs)
-  ((Pat.Dead : row) : rows, runs) -> updateRuns (row : rows) (add Dead runs)
-  ((Pat.Alive : row) : rows, runs) -> updateRuns (row : rows) (add Alive runs)
+  ((False : row) : rows, runs) -> updateRuns (row : rows) (add Dead runs)
+  ((True : row) : rows, runs) -> updateRuns (row : rows) (add Alive runs)
 
 fromShow :: (Show a, IsString s) => a -> s
 fromShow = String.fromString . show
