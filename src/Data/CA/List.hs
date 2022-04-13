@@ -3,7 +3,7 @@ module Data.CA.List (withDimensions, combinations) where
 import qualified Control.Applicative as Ap
 
 import qualified Data.CA.Pattern as Pat
-import Data.CA.Pattern (Pattern, Cell(..))
+import Data.CA.Pattern (Pattern, Cell)
 
 composeN :: Int -> (a -> a) -> a -> a
 composeN n f
