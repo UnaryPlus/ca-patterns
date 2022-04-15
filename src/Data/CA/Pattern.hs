@@ -275,7 +275,7 @@ setWidth w pat =
 Set the height and width of a pattern.
 -}
 setDimensions :: Int -> Int -> Pattern -> Pattern
-setDimensions h w = setHeight h . setWidth w
+setDimensions h w = setWidth w . setHeight h
 
 {-|
 Reflect vertically, switching the top and the bottom.
