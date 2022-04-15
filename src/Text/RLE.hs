@@ -85,7 +85,7 @@ parseRule = do
   return rule
 
 parseHeader :: (Stream s Identity Char) => Parser s Header
-parseHeader = Ap.liftA3 Header parseWidth parseHeight maybeRule
+parseHeader = Ap.liftA3 (flip Header) parseWidth parseHeight maybeRule
   where maybeRule = fmap Just parseRule <|> return Nothing
 
 parseRunType :: (Stream s Identity Char) => Parser s RunType
@@ -98,7 +98,7 @@ parseRun = Ap.liftA2 (,) (natural <|> return 1) parseRunType
 
 parseData :: (Stream s Identity Char) => Parser s RLEData
 parseData = do
-  rle <- Ap.liftA2 (,) parseHeader (many1 parseRun)
+  rle <- Ap.liftA2 (,) parseHeader (many parseRun)
   symbol "!"
   return rle
 
