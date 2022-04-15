@@ -28,6 +28,40 @@ glider = Pat.fromList
   , [ O, O, O ]
   ]
 
+largeGlider :: Pattern
+largeGlider = Pat.fromList
+  [ [ o, O, o, o, o ]
+  , [ o, o, O, o, o ]
+  , [ O, O, O, o, o ]
+  , [ o, o, o, o, o ]
+  ]
+
+cutGlider :: Pattern
+cutGlider = Pat.fromList
+  [ [ o, O, o, o ]
+  , [ o, o, O, o ]
+  ]
+
+twoGliders1 :: Pattern
+twoGliders1 = Pat.fromList
+  [ [ o, O, o, o, o ]
+  , [ o, o, O, o, o ]
+  , [ O, O, O, o, o ]
+  , [ o, o, o, O, o ]
+  , [ o, o, o, o, O ]
+  , [ o, o, O, O, O ]
+  ]
+
+twoGliders2 :: Pattern
+twoGliders2 = Pat.fromList
+  [ [ o, o, o, O, o ]
+  , [ o, o, o, o, O ]
+  , [ o, o, O, O, O ]
+  , [ o, O, o, o, o ]
+  , [ o, o, O, o, o ]
+  , [ O, O, O, o, o ]
+  ]
+
 gliderStr1, gliderStr2 :: (IsString s => s)
 gliderStr1 = ".O.\n..O\nOOO\n"
 gliderStr2 = "_*_\n__*\n***\n"
@@ -37,6 +71,36 @@ diagonal = Pat.fromList
   [ [ O, o, o, o ]
   , [ o, O, o, o ]
   , [ o, o, O, o ]
+  ]
+
+reflectedX :: Pattern
+reflectedX = Pat.fromList
+  [ [ o, o, o, O ]
+  , [ o, o, O, o ]
+  , [ o, O, o, o ]
+  ]
+
+reflectedY :: Pattern
+reflectedY = Pat.fromList
+  [ [ o, o, O, o ]
+  , [ o, O, o, o ]
+  , [ O, o, o, o ]
+  ]
+
+rotatedL :: Pattern
+rotatedL = Pat.fromList
+  [ [ o, o, o ]
+  , [ o, o, O ]
+  , [ o, O, o ]
+  , [ O, o, o ]
+  ]
+
+rotatedR :: Pattern
+rotatedR = Pat.fromList
+  [ [ o, o, O ]
+  , [ o, O, o ]
+  , [ O, o, o ]
+  , [ o, o, o ]
   ]
 
 horizontal :: Pattern
@@ -249,21 +313,85 @@ spec = do
       Pat.trimTop untrimmed `shouldBe` trimmedTop
     it "is idempotent" do
       Pat.trimTop trimmedTop `shouldBe` trimmedTop
+    it "does nothing to the empty pattern" do
+      Pat.trimTop empty `shouldBe` empty
 
   describe "Data.CA.Pattern.trimBottom" do
     it "removes rows of dead cells from the bottom" do
       Pat.trimBottom untrimmed `shouldBe` trimmedBottom
     it "is idempotent" do
       Pat.trimBottom trimmedBottom `shouldBe` trimmedBottom
+    it "does nothing to the empty pattern" do
+      Pat.trimBottom empty `shouldBe` empty
 
   describe "Data.CA.Pattern.trimLeft" do
     it "removes columns of dead cells from the left" do
       Pat.trimLeft untrimmed `shouldBe` trimmedLeft
     it "is idempotent" do
       Pat.trimLeft trimmedLeft `shouldBe` trimmedLeft
+    it "does nothing to the empty pattern" do
+      Pat.trimLeft empty `shouldBe` empty
 
   describe "Data.CA.Pattern.trimRight" do
     it "removes columns of dead cells from the right" do
       Pat.trimRight untrimmed `shouldBe` trimmedRight
     it "is idempotent" do
       Pat.trimRight trimmedRight `shouldBe` trimmedRight
+    it "does nothing to the empty pattern" do
+      Pat.trimRight empty `shouldBe` empty
+
+  describe "Data.CA.Pattern.trim" do
+    it "removes all layers of dead cells" do
+      Pat.trim untrimmed `shouldBe` trimmedAll
+    it "is idempotent" do
+      Pat.trim trimmedAll `shouldBe` trimmedAll
+    it "does nothing to the empty pattern" do
+      Pat.trim empty `shouldBe` empty
+
+  describe "Data.CA.Pattern.setHeight" do
+    it "adds rows of dead cells to the bottom" do
+      Pat.setHeight 5 trimmedBottom `shouldBe` untrimmed
+    it "removes rows from the bottom" do
+      Pat.setHeight 3 untrimmed `shouldBe` trimmedBottom
+
+  describe "Data.CA.Pattern.setWidth" do
+    it "adds columns of dead cells to the right" do
+      Pat.setWidth 5 trimmedRight `shouldBe` untrimmed
+    it "removes columns from the right" do
+      Pat.setWidth 3 untrimmed `shouldBe` trimmedRight
+
+  describe "Data.CA.Pattern.setDimensions" do
+    it "sets the height and width of a pattern" do
+      Pat.setDimensions 4 5 glider `shouldBe` largeGlider
+      Pat.setDimensions 2 4 glider `shouldBe` cutGlider
+
+  describe "Data.CA.Pattern.reflectX" do
+    it "reflects a pattern horizontally" do
+      Pat.reflectX diagonal `shouldBe` reflectedX
+    it "does nothing to the empty pattern" do
+      Pat.reflectX empty `shouldBe` empty
+
+  describe "Data.CA.Pattern.reflectY" do
+    it "reflects a pattern vertically" do
+      Pat.reflectY diagonal `shouldBe` reflectedY
+    it "does nothing to the empty pattern" do
+      Pat.reflectY empty `shouldBe` empty
+
+  describe "Data.CA.Pattern.rotateL" do
+    it "rotates a pattern counterclockwise" do
+      Pat.rotateL diagonal `shouldBe` rotatedL
+    it "does nothing to the empty pattern" do
+      Pat.rotateL empty `shouldBe` empty
+
+  describe "Data.CA.Pattern.rotateR" do
+    it "rotates a pattern clockwise" do
+      Pat.rotateR diagonal `shouldBe` rotatedR
+    it "does nothing to the empty pattern" do
+      Pat.rotateR empty `shouldBe` empty
+
+  describe "Data.CA.Pattern.combine" do
+    it "combines two patterns" do
+      Pat.combine 3 2 glider glider `shouldBe` twoGliders1
+      Pat.combine (-3) (-2) glider glider `shouldBe` twoGliders1
+      Pat.combine 3 (-2) glider glider `shouldBe` twoGliders2
+      Pat.combine (-3) 2 glider glider `shouldBe` twoGliders2
