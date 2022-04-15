@@ -217,11 +217,13 @@ trimBottom = transform (dropWhileEnd (all not))
 
 trimLeftV :: Vector (Vector Cell) -> Vector (Vector Cell)
 trimLeftV rows
+  | Vec.null rows || any Vec.null rows = rows
   | not (any firstCell rows) = trimLeftV (fmap dropFirst rows)
   | otherwise = rows
 
 trimRightV :: Vector (Vector Cell) -> Vector (Vector Cell)
 trimRightV rows
+  | Vec.null rows || any Vec.null rows = rows
   | not (any lastCell rows) = trimRightV (fmap dropLast rows)
   | otherwise = rows
 
