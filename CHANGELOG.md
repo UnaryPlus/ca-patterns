@@ -12,4 +12,5 @@
 * `trimLeft` and `trimRight` no longer recurse infinitely when given
 the empty pattern.
 * `setDimensions` creates a grid of dead cells when given the empty pattern.
+* RLE parser returns width and height in the correct order.
 * Added test suite.
