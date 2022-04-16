@@ -26,9 +26,10 @@ See this [LifeWiki article](https://conwaylife.com/wiki/Run_Length_Encoded)
 for more information.
 -}
 
+{-# OPTIONS_GHC -fno-warn-unused-imports #-}
 {-# LANGUAGE BlockArguments, LambdaCase, OverloadedStrings, FlexibleContexts #-}
 
-module Text.RLE (Rule, parse, make, printAll) where
+module Text.RLE (Rule, parse, parseMany, make, printAll) where
 
 import qualified Data.Char as Char
 import qualified Data.String as String
@@ -43,6 +44,7 @@ import Text.Parsec
   )
 
 import qualified Data.Text.IO as IO
+import Data.Text(Text)
 
 import qualified Data.CA.Pattern as Pat
 import Data.CA.Pattern (Pattern)
@@ -85,7 +87,7 @@ parseRule = do
   return rule
 
 parseHeader :: (Stream s Identity Char) => Parser s Header
-parseHeader = Ap.liftA3 Header parseWidth parseHeight maybeRule
+parseHeader = Ap.liftA3 (flip Header) parseWidth parseHeight maybeRule
   where maybeRule = fmap Just parseRule <|> return Nothing
 
 parseRunType :: (Stream s Identity Char) => Parser s RunType
@@ -98,7 +100,7 @@ parseRun = Ap.liftA2 (,) (natural <|> return 1) parseRunType
 
 parseData :: (Stream s Identity Char) => Parser s RLEData
 parseData = do
-  rle <- Ap.liftA2 (,) parseHeader (many1 parseRun)
+  rle <- Ap.liftA2 (,) parseHeader (many parseRun)
   symbol "!"
   return rle
 
@@ -122,8 +124,8 @@ updateRows = curry \case
     runs' = (n - 1, rt) : runs
 
     rows' = case rt of
-      Dead -> add Pat.Dead rows
-      Alive -> add Pat.Alive rows
+      Dead -> add False rows
+      Alive -> add True rows
       Newline -> [] : rows
 
     in updateRows runs' rows'
@@ -139,7 +141,7 @@ Parse an RLE file, returning a 'Rule' (if it exists) and a 'Pattern'.
 The argument can be 'String', 'Text', or any other type with a 'Stream'
 instance.
 
-This parser is fairly liberal. Whitespace is allowed everywhere except
+Whitespace is allowed everywhere except
 in the middle of a number or rulestring, and there need not be a
 newline after the header. Also, text after the final @!@ character is
 ignored.
@@ -150,6 +152,16 @@ parse str =
     Left _ -> Nothing
     Right rle -> Just (toPattern rle)
 
+{-|
+Parse zero or more RLE files. The argument can be 'String', 'Text', or
+any other type with a 'Stream' instance.
+-}
+parseMany :: (Stream s Identity Char) => s -> Maybe [(Maybe Rule, Pattern)]
+parseMany str =
+  case runParser (many parseRLE) () "" str of
+    Left _ -> Nothing
+    Right rles -> Just (map toPattern rles)
+
 updateRuns :: [[Pat.Cell]] -> [Run] -> [Run]
 updateRuns = let
   add rt = \case
@@ -159,8 +171,8 @@ updateRuns = let
   in curry \case
   ([], runs) -> reverse runs
   ([] : rows, runs) -> updateRuns rows (add Newline runs)
-  ((Pat.Dead : row) : rows, runs) -> updateRuns (row : rows) (add Dead runs)
-  ((Pat.Alive : row) : rows, runs) -> updateRuns (row : rows) (add Alive runs)
+  ((False : row) : rows, runs) -> updateRuns (row : rows) (add Dead runs)
+  ((True : row) : rows, runs) -> updateRuns (row : rows) (add Alive runs)
 
 fromShow :: (Show a, IsString s) => a -> s
 fromShow = String.fromString . show

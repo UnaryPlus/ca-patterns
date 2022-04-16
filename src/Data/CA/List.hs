@@ -3,7 +3,7 @@ module Data.CA.List (withDimensions, combinations) where
 import qualified Control.Applicative as Ap
 
 import qualified Data.CA.Pattern as Pat
-import Data.CA.Pattern (Pattern, Cell(..))
+import Data.CA.Pattern (Pattern, Cell)
 
 composeN :: Int -> (a -> a) -> a -> a
 composeN n f
@@ -11,7 +11,7 @@ composeN n f
   | otherwise = f . composeN (n - 1) f
 
 possible1 :: Int -> [[Cell]]
-possible1 n = composeN n (Ap.liftA2 (:) [Dead, Alive]) [[]]
+possible1 n = composeN n (Ap.liftA2 (:) [False, True]) [[]]
 
 possible2 :: Int -> Int -> [[[Cell]]]
 possible2 h w = let
