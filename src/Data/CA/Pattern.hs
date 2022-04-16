@@ -85,7 +85,7 @@ transform f (Pattern rows) = Pattern (f rows)
 Get the state of one of the cells in a pattern. @lookup 0 0@
 returns the cell in the upper-left corner. If the row
 or column number is out of range, this function will
-return 'Dead'.
+return 'False'.
 -}
 lookup
   :: Int -- ^ row
@@ -234,7 +234,7 @@ trimLeft :: Pattern -> Pattern
 trimLeft = transform trimLeftV
 
 {-|
-You get the idea.
+Remove columns of dead cells from the right side of a pattern.
 -}
 trimRight :: Pattern -> Pattern
 trimRight = transform trimRightV
@@ -261,7 +261,7 @@ setHeight h pat =
       in transform (padEnd h row) pat
 
 {-|
-Force a pattern to have the given width by remove columns
+Force a pattern to have the given width by removing columns
 from the right or by adding columns of dead cells.
 -}
 setWidth :: Int -> Pattern -> Pattern

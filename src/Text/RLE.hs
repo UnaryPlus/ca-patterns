@@ -26,6 +26,7 @@ See this [LifeWiki article](https://conwaylife.com/wiki/Run_Length_Encoded)
 for more information.
 -}
 
+{-# OPTIONS_GHC -fno-warn-unused-imports #-}
 {-# LANGUAGE BlockArguments, LambdaCase, OverloadedStrings, FlexibleContexts #-}
 
 module Text.RLE (Rule, parse, parseMany, make, printAll) where
@@ -43,6 +44,7 @@ import Text.Parsec
   )
 
 import qualified Data.Text.IO as IO
+import Data.Text(Text)
 
 import qualified Data.CA.Pattern as Pat
 import Data.CA.Pattern (Pattern)
@@ -139,7 +141,7 @@ Parse an RLE file, returning a 'Rule' (if it exists) and a 'Pattern'.
 The argument can be 'String', 'Text', or any other type with a 'Stream'
 instance.
 
-This parser is fairly liberal. Whitespace is allowed everywhere except
+Whitespace is allowed everywhere except
 in the middle of a number or rulestring, and there need not be a
 newline after the header. Also, text after the final @!@ character is
 ignored.
